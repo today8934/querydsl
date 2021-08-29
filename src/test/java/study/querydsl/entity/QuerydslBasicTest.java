@@ -288,6 +288,59 @@ public class QuerydslBasicTest {
         List<Member> result = searchMember1(usernameParam, ageParam);
     }
 
+    @Test
+    public void bulkUpdate() {
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(28))
+                .execute();
+        System.out.println("count = " + count);
+
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        System.out.println("result = " + result);
+    }
+
+    @Test
+    public void bulkAdd() {
+        queryFactory
+                .update(member)
+                .set(member.age, member.age.add(1))
+                .execute();
+
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        System.out.println("result = " + result);
+    }
+    
+    @Test
+    public void bulkDelete() {
+        queryFactory
+                .delete(member)
+                .where(member.age.gt(18))
+                .execute();
+        
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        System.out.println("result = " + result);
+    }
+
     private List<Member> searchMember1(String usernameParam, Integer ageParam) {
         BooleanBuilder builder = new BooleanBuilder();
 
